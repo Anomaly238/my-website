@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Language Model</title>
+    <script>
+        var data = [
+            "cat",
+            "dog",
+            "apple",
+            "banana",
+            "car",
+            "and",
+            "to",
+            "can",
+            "i",
+            "but",
+            "because",
+            "death",
+            "at",
+            "boom",
+            "damn",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "0",
+            "jam",
+            "sand",
+            "ground",
+            "dirt",
+            "stone",
+            "gravel",
+            "air",
+            "oxygen",
+            "water",
+            "lava",
+            "acid",
+            "play",
+            "bread",
+            "an",
+            "food",
+            "toy",
+            " ",
+            ",",
+            ".",
+            "die",
+            "sunny",
+            "beach",
+            "mountain",
+            "forest",
+            "city",
+            "happy",
+            "sad",
+            "excited",
+            "bored",
+            "blue",
+            "red",
+            "green",
+            "yellow",
+            "big",
+            "small",
+            "hot",
+            "cold",
+            "fast",
+            "slow",
+            "high",
+            "low",
+            "bright",
+            "dark",
+            "funny",
+            "serious",
+            "open",
+            "closed",
+            "new",
+            "old",
+            "rich",
+            "poor",
+            "strong",
+            "weak",
+            "up",
+            "down",
+            "left",
+            "right",
+            "inside",
+            "outside"
+        ];
+
+        function generateResponse(prompt) {
+            var order = 1; // Order of the Markov chain
+            var response = prompt;
+
+            // Combine previous searches into a single string
+            var corpus = data.join(" ");
+
+            var words = corpus.split(" ");
+            var ngrams = {};
+
+            // Generate n-grams from the corpus
+            for (var i = 0; i < words.length - order; i++) {
+                var gram = words.slice(i, i + order);
+                var nextWord = words[i + order];
+                if (!ngrams.hasOwnProperty(gram)) {
+                    ngrams[gram] = [];
+                }
+                ngrams[gram].push(nextWord);
+            }
+
+            var currentGram = prompt.split(" ");
+
+            // Generate the response by sampling the next word from the n-grams
+            for (var j = 0; j < 20; j++) {
+                var possibilities = ngrams[currentGram.slice(-order).join(" ")];
+                if (!possibilities) {
+                    break;
+                }
+                var nextIndex = Math.floor(Math.random() * possibilities.length);
+                var nextWord = possibilities[nextIndex];
+                response += " " + nextWord;
+                currentGram.push(nextWord);
+                currentGram.shift();
+            }
+
+            return response;
+        }
+
+        function search() {
+            var prompt = document.getElementById("search-bar").value;
+            var response = generateResponse(prompt);
+            displayResponse(response);
+        }
+
+        function displayResponse(response) {
+            var responseContainer = document.getElementById("response");
+            responseContainer.innerHTML = "<h2>Response:</h2>" + response;
+        }
+    </script>
+</head>
+<body>
+    <h1>Language Model</h1>
+    <input type="text" id="search-bar" placeholder="Enter your search prompt">
+    <button onclick="search()">Search</button>
+    <div id="response"></div>
+</body>
+</html>
